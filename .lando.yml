@@ -1,0 +1,37 @@
+name: stephanie-galata
+recipe: drupal8
+config:
+  php: '7.1'
+  via: nginx
+  webroot: web
+  xdebug: true
+services:
+  index:
+    type: solr
+    core: orange_solr
+    portforward: true
+    config:
+      conf: web/modules/contrib/search_api_solr/solr-conf/7.x
+  node:
+    type: node
+    run:
+      - cd $LANDO_MOUNT
+      - npm install gulp gulp-sass gulp-sourcemaps gulp-rename
+      - npm install gulp-postcss postcss-easysprites autoprefixer gulp-cli
+  mailhog:
+    type: mailhog
+    hogfrom:
+      - appserver
+    portforward: true
+proxy:
+  index:
+    - 'solr.drupal-orange-project.lndo.site:8983'
+  mailhog:
+    - mail.drupal-orange-project.lndo.site
+tooling:
+  node:
+    service: node
+  npm:
+    service: node
+  gulp:
+    service: node
